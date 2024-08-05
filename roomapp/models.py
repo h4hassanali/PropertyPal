@@ -31,6 +31,7 @@ class RoommateProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='roommate_profile')
     contact_info = models.CharField(max_length=100)
     image = models.ImageField(upload_to='roommate_images/', blank=True, null=True)  # Added image field
+    budget = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Added budget attribute
 
     def __str__(self):
         return f"{self.user.username} in {self.city.city_name}"
@@ -41,6 +42,7 @@ class Accessory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     image = models.ImageField(upload_to='accessory_images/', blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Added price attribute
 
     def __str__(self):
         return f"{self.name} in {self.city.city_name}"

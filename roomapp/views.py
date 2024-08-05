@@ -5,7 +5,8 @@ from .models import City, Room, RoommateProfile, Accessory
 def index(request):
     return render(request, 'index.html')
 
-
+def aboutus(request):
+    return render(request,'aboutus.html')
 def search(request):
     if request.method == "POST":
         city_name = request.POST.get('city_name')
@@ -37,12 +38,18 @@ def search(request):
         context = {
             'items': items,
             'city_name': city_name,
-            'search_type': 'room'
+            'search_type': 'room',
+            'sort_option': sort_option
         }
         return render(request, 'search_result_ui.html', context)
     
     elif search_type == 'roommate':
-        items = RoommateProfile.objects.filter(city=city)
+        if sort_option == 'price_low_to_high':
+            items = RoommateProfile.objects.filter(city=city).order_by('budget')
+        elif sort_option == 'price_high_to_low':
+            items = RoommateProfile.objects.filter(city=city).order_by('-budget')
+        else:
+            items = RoommateProfile.objects.filter(city=city)
         context = {
             'items': items,
             'city_name': city_name,
@@ -51,13 +58,20 @@ def search(request):
         return render(request, 'search_result_ui.html', context)
     
     elif search_type == 'accessory':
-        items = Accessory.objects.filter(city=city)
+        if sort_option == 'price_low_to_high':
+            items = Accessory.objects.filter(city=city).order_by('price')
+        elif sort_option == 'price_high_to_low':
+            items = Accessory.objects.filter(city=city).order_by('-price')
+        else:
+            items = Accessory.objects.filter(city=city)
         context = {
             'items': items,
             'city_name': city_name,
-            'search_type': 'accessory'
+            'search_type': 'accessory',
+            'sort_option': sort_option
         }
         return render(request, 'search_result_ui.html', context)
+
 def autocomplete(request):
     if 'term' in request.GET:
         qs = City.objects.filter(city_name__icontains=request.GET.get('term'))

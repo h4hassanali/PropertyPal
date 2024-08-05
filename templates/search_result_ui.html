@@ -460,9 +460,6 @@
 
 
 
-
-
-
          <div style="
          display: grid;
          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -494,6 +491,8 @@
                              Room listed by {{ item.listed_by.username }}
                          {% elif search_type == 'roommate' %}
                              {{ item.user.username }}
+                         {% elif search_type == 'accessory' %}
+                             Accessory: {{ item.name }}
                          {% endif %}
                      </div>
                      <div style="
@@ -502,11 +501,16 @@
                      ">
                          {% if search_type == 'room' %}
                              City: {{ item.city.city_name }}<br>
-                             Rent: {{ item.rent }}<br>
+                             Rent: Rs: {{ item.rent }} /-<br>
                              Info: {{ item.info }}
                          {% elif search_type == 'roommate' %}
                              City: {{ item.city.city_name }}<br>
-                             Contact Info: {{ item.contact_info }}
+                             Contact Info: {{ item.contact_info }}<br>
+                             Budget: {{ item.budget }}
+                         {% elif search_type == 'accessory' %}
+                             City: {{ item.city.city_name }}<br>
+                             Description: {{ item.description }}<br>
+                             Price: {{ item.price }}
                          {% endif %}
                      </div>
                  </div>
@@ -524,6 +528,7 @@
              </div>
          {% endfor %}
      </div>
+     
 
 
 

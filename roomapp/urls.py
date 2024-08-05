@@ -9,4 +9,5 @@ urlpatterns = [
     path('search', search, name='search'),
     path('autocomplete/', autocomplete, name='autocomplete'),
     path('accessories/', list_accessories, name='list_accessories'),
+    path('aboutus',aboutus,name='aboutus'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

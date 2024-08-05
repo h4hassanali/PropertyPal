@@ -338,14 +338,16 @@
                 <form method="get" action="{% url 'search' %}">
                     <input type="hidden" name="city_name" value="{{ city_name }}">
                     <input type="hidden" name="searchType" value="{{ search_type }}">
-                    
+            
                     <!-- Sort By Dropdown -->
-                    <div class="sort-by" style="display: flex; align-items: center; margin-bottom: 1em; margin-top: 1em;"> <!-- Added margin-top -->
+                    <div class="sort-by" style="display: flex; align-items: center; margin-bottom: 1em; margin-top: 1em;">
                         <label for="sort" style="font-size: 1em; font-weight: 500; margin-right: 0.75em; color: #555; text-transform: uppercase;">Sort By</label>
                         <select id="sort" name="sort" onchange="this.form.submit()" 
                                 style="padding: 0.6em 1em; font-size: 1em; border: none; border-radius: 8px; background: #f0f0f0; color: #333; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: background 0.3s ease, color 0.3s ease;">
                             <option value="price_low_to_high" {% if request.GET.sort == 'price_low_to_high' %}selected{% endif %}>Price: Low to High</option>
                             <option value="price_high_to_low" {% if request.GET.sort == 'price_high_to_low' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest</option>
+                            <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest</option>
                         </select>
                     </div>
                 
@@ -382,6 +384,15 @@
                     <button class="bg-gray-100 text-gray-400 px-6 py-2 transition duration-200 rounded-lg text-xs">Female</button>
                 </div>
             </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const input = document.getElementById("city_name");
+            
+                    input.addEventListener("input", function() {
+                        const query = input.value;
+                    });
+            </script>
+            
             <script>
                 document.addEventListener("DOMContentLoaded", function() {
                     const input = document.getElementById("city_name");

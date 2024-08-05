@@ -1,0 +1,139 @@
+[
+    {
+        "model": "roomapp.city",
+        "pk": 4,
+        "fields": {
+            "city_name": "Islamabad"
+        }
+    },
+    {
+        "model": "roomapp.city",
+        "pk": 5,
+        "fields": {
+            "city_name": "Faisalabad"
+        }
+    },
+    {
+        "model": "roomapp.city",
+        "pk": 6,
+        "fields": {
+            "city_name": "Rawalpindi"
+        }
+    },
+    {
+        "model": "roomapp.user",
+        "pk": 3,
+        "fields": {
+            "username": "alice_smith",
+            "email": "alice@example.com",
+            "password": "password123",
+            "is_looking_for_room": true
+        }
+    },
+    {
+        "model": "roomapp.user",
+        "pk": 4,
+        "fields": {
+            "username": "bob_johnson",
+            "email": "bob@example.com",
+            "password": "password123",
+            "is_looking_for_roommate": true
+        }
+    },
+    {
+        "model": "roomapp.user",
+        "pk": 5,
+        "fields": {
+            "username": "charlie_brown",
+            "email": "charlie@example.com",
+            "password": "password123",
+            "is_looking_for_room": true
+        }
+    },
+    {
+        "model": "roomapp.user",
+        "pk": 6,
+        "fields": {
+            "username": "diana_prince",
+            "email": "diana@example.com",
+            "password": "password123",
+            "is_looking_for_roommate": true
+        }
+    },
+    {
+        "model": "roomapp.room",
+        "pk": 4,
+        "fields": {
+            "city": 4,
+            "image": "path/to/image4.jpg",
+            "info": "Luxury apartment with balcony",
+            "listed_by": 3
+        }
+    },
+    {
+        "model": "roomapp.room",
+        "pk": 5,
+        "fields": {
+            "city": 5,
+            "image": "path/to/image5.jpg",
+            "info": "Compact room in a shared house",
+            "listed_by": 4
+        }
+    },
+    {
+        "model": "roomapp.room",
+        "pk": 6,
+        "fields": {
+            "city": 6,
+            "image": "path/to/image6.jpg",
+            "info": "Spacious studio apartment",
+            "listed_by": 5
+        }
+    },
+    {
+        "model": "roomapp.room",
+        "pk": 7,
+        "fields": {
+            "city": 1,
+            "image": "path/to/image7.jpg",
+            "info": "Modern room with all amenities",
+            "listed_by": 6
+        }
+    },
+    {
+        "model": "roomapp.roommateprofile",
+        "pk": 3,
+        "fields": {
+            "city": 4,
+            "user": 4,
+            "contact_info": "555-6789"
+        }
+    },
+    {
+        "model": "roomapp.roommateprofile",
+        "pk": 4,
+        "fields": {
+            "city": 5,
+            "user": 5,
+            "contact_info": "555-9876"
+        }
+    },
+    {
+        "model": "roomapp.roommateprofile",
+        "pk": 5,
+        "fields": {
+            "city": 6,
+            "user": 6,
+            "contact_info": "555-5432"
+        }
+    },
+    {
+        "model": "roomapp.roommateprofile",
+        "pk": 6,
+        "fields": {
+            "city": 1,
+            "user": 3,
+            "contact_info": "555-3210"
+        }
+    }
+]

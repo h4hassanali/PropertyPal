@@ -296,11 +296,12 @@
 
          <nav class="shadow-md shadow-[#80808015] h-14 w-full border-bottom transition duration-200 fixed top-0 left-0 right-0 bg-base-color lg:h-16 zIndex-1100">
             <div class="Container flex items-center justify-between showNav relative zIndex-1100">
-              <a class="z-50" aria-label="Go to TestMate home page" href="index.html#home">
+              <a class="z-50" aria-label="Go to TestMate home page" href="/index">
                 <div class="w-20 md:w-24">
-                  <!-- Replacing SVG with text and styling "Mate" in green -->
-                  <span class="text-2xl font-bold text-gray-900">Test<span class="text-green-600">Mate</span></span>
-                </div>
+                    <!-- Adding logo.png with custom styles -->
+                    <img src="{% static 'logo.png' %}" alt="Logo" class="w-full h-auto object-contain">
+                  </div>
+                  
               </a>
               <div class="hidden md:flex items-center space-x-5 bg-base-color transition duration-200">
                 <!-- Navigation links -->
@@ -311,7 +312,7 @@
                 <a href="advertise.html" class="text-black hover:text-green-600 transition">Advertise with Us</a>
 
                 <a href="/login">
-                  <button class="px-6 py-3 text-xs rounded-full bg-gray-100 text-black hover:shadow-md md:hover:scale-105 transition">Login <small>/</small> Register</button>
+                  <button class="px-6 py-3 text-xs rounded-full bg-gray-100 text-black hover:shadow-md md:hover:scale-105 transition" style="color: #10b981;">Login <small>/</small> Register</button>
                 </a>
                 <button class="px-6 py-3 text-xs hover:shadow-md md:hover:scale-105 transition duration-200 text-black bg-nav-button-color rounded-full">Download App</button>
               </div>

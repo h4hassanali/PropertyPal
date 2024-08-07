@@ -27,6 +27,10 @@
       <meta property="twitter:card" content="website"/>
       <meta property="twitter:image" content="logo.png"/>
       <meta property="og:video" content="https://www.youtube.com/watch?v=EFFeTzGHkvo"/>
+      <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
       <link rel="shortcut icon" href="favicon.ico"/>
       <link rel="preconnect" href="index.html"/>
       <script defer="" src="https://www.googletagmanager.com/gtag/js?id=G-GPH0Q3P7D1"></script><script defer="">
@@ -462,7 +466,7 @@
                         <path d="M17 15l0 .01"></path>
                      </svg>
                   </div>
-                  <p class="text-sm">Sell Accessories</p>
+                  <p class="text-sm">Accessories</p>
                </div>
               </a>
             </div>
@@ -470,78 +474,101 @@
 
 
 
-
          <div style="
-         display: grid;
-         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-         gap: 16px;
-         padding: 16px;
-     ">
-         {% for item in items %}
-             <div style="
-                 border: 1px solid #ddd;
-                 border-radius: 8px;
-                 background-color: #fff;
-                 overflow: hidden;
-                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                 transition: transform 0.3s ease;
-             ">
-                 <img src="{{ item.image.url }}" alt="Image" style="
-                     width: 100%;
-                     height: 200px;
-                     object-fit: cover;
-                 ">
-                 <div style="
-                     padding: 16px;
-                 ">
-                     <div style="
-                         font-size: 1.25em;
-                         margin-bottom: 8px;
-                     ">
-                         {% if search_type == 'room' %}
-                             Room listed by {{ item.listed_by.username }}
-                         {% elif search_type == 'roommate' %}
-                             {{ item.user.username }}
-                         {% elif search_type == 'accessory' %}
-                             Accessory: {{ item.name }}
-                         {% endif %}
-                     </div>
-                     <div style="
-                         font-size: 1em;
-                         color: #555;
-                     ">
-                         {% if search_type == 'room' %}
-                             City: {{ item.city.city_name }}<br>
-                             Rent: Rs: {{ item.rent }} /-<br>
-                             Info: {{ item.info }}
-                         {% elif search_type == 'roommate' %}
-                             City: {{ item.city.city_name }}<br>
-                             Contact Info: {{ item.contact_info }}<br>
-                             Budget: {{ item.budget }}
-                         {% elif search_type == 'accessory' %}
-                             City: {{ item.city.city_name }}<br>
-                             Description: {{ item.description }}<br>
-                             Price: {{ item.price }}
-                         {% endif %}
-                     </div>
-                 </div>
-                 <div style="
-                     display: flex;
-                     justify-content: space-between;
-                     font-size: 0.875em;
-                     color: #777;
-                     padding: 8px 16px;
-                     border-top: 1px solid #ddd;
-                 ">
-                     <span>{{ item.city.city_name }}</span>
-                     <span>7 km from your search</span>
-                 </div>
-             </div>
-         {% endfor %}
-     </div>
-     
-
-
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    padding: 16px;
+">
+    {% for item in items %}
+        <div style="
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        ">
+            <div id="carousel{{ forloop.counter }}" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    {% for attachment in item.attachments.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            {% if attachment.file_type == 'Photo' %}
+                                <img src="{{ attachment.file.url }}" alt="Image" style="
+                                    width: 100%;
+                                    height: 200px;
+                                    object-fit: cover;
+                                ">
+                            {% elif attachment.file_type == 'Video' %}
+                                <video controls style="
+                                    width: 100%;
+                                    height: 200px;
+                                    object-fit: cover;
+                                ">
+                                    <source src="{{ attachment.file.url }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <a class="carousel-control-prev" href="#carousel{{ forloop.counter }}" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carousel{{ forloop.counter }}" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+            <div style="
+                padding: 16px;
+            ">
+                <div style="
+                    font-size: 1.25em;
+                    margin-bottom: 8px;
+                ">
+                    {% if search_type == 'room' %}
+                        Room listed by {{ item.listed_by.username }}
+                    {% elif search_type == 'roommate' %}
+                        {{ item.user.username }}
+                    {% elif search_type == 'accessory' %}
+                        Accessory: {{ item.name }}
+                    {% endif %}
+                </div>
+                <div style="
+                    font-size: 1em;
+                    color: #555;
+                ">
+                    {% if search_type == 'room' %}
+                        City: {{ item.city.city_name }}<br>
+                        Rent: Rs: {{ item.rent }} /-<br>
+                        Info: {{ item.info }}
+                    {% elif search_type == 'roommate' %}
+                        City: {{ item.city.city_name }}<br>
+                        Contact Info: {{ item.contact_info }}<br>
+                        Budget: {{ item.budget }}
+                    {% elif search_type == 'accessory' %}
+                        City: {{ item.city.city_name }}<br>
+                        Description: {{ item.description }}<br>
+                        Price: {{ item.price }}
+                    {% endif %}
+                </div>
+            </div>
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.875em;
+                color: #777;
+                padding: 8px 16px;
+                border-top: 1px solid #ddd;
+            ">
+                <span>{{ item.city.city_name }}</span>
+                <span>7 km from your search</span>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
 
 

@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from .models import City, Room, RoommateProfile, Accessory
+from .models import City, Room, RoommateProfile, Accessory, Attachment
 
 def index(request):
     return render(request, 'index.html')
 
 def aboutus(request):
-    return render(request,'aboutus.html')
+    return render(request, 'aboutus.html')
+
 def search(request):
     if request.method == "POST":
         city_name = request.POST.get('city_name')
@@ -39,8 +40,13 @@ def search(request):
             items = Room.objects.filter(city=city).order_by('id')  # Assuming 'id' corresponds to the creation order
         else:
             items = Room.objects.filter(city=city)
+        
+        # Fetch attachments for rooms
+        attachments = Attachment.objects.filter(room__in=items)
+        
         context = {
             'items': items,
+            'attachments': attachments,
             'city_name': city_name,
             'search_type': 'room',
             'sort_option': sort_option
@@ -58,8 +64,13 @@ def search(request):
             items = RoommateProfile.objects.filter(city=city).order_by('id')  # Assuming 'id' corresponds to the creation order
         else:
             items = RoommateProfile.objects.filter(city=city)
+        
+        # Fetch attachments for roommate profiles
+        attachments = Attachment.objects.filter(roommate_profile__in=items)
+        
         context = {
             'items': items,
+            'attachments': attachments,
             'city_name': city_name,
             'search_type': 'roommate',
             'sort_option': sort_option
@@ -77,8 +88,13 @@ def search(request):
             items = Accessory.objects.filter(city=city).order_by('id')  # Assuming 'id' corresponds to the creation order
         else:
             items = Accessory.objects.filter(city=city)
+        
+        # Fetch attachments for accessories
+        attachments = Attachment.objects.filter(accessory__in=items)
+        
         context = {
             'items': items,
+            'attachments': attachments,
             'city_name': city_name,
             'search_type': 'accessory',
             'sort_option': sort_option
@@ -87,6 +103,7 @@ def search(request):
 
     else:
         return HttpResponse("Invalid search type")
+
 def autocomplete(request):
     if 'term' in request.GET:
         qs = City.objects.filter(city_name__icontains=request.GET.get('term'))
@@ -100,3 +117,7 @@ def list_accessories(request):
         'accessories': accessories
     }
     return render(request, 'accessory_list.html', context)
+
+
+def advanced_search(request):
+    pass

@@ -224,8 +224,137 @@ def advanced_search(request):
 
     else:
         return HttpResponse("POST request not allowed for this action")
-
 def advanced_search_result(request):
+    if request.method == "GET":
+        city_name = request.GET.get('city_name')
+        search_type = request.GET.get('searchType')
+
+        # Ensure city name and search type are provided
+        if not city_name or search_type not in ['room', 'roommate', 'accessory']:
+            return HttpResponse("Invalid input", status=400)
+
+        try:
+            city = City.objects.get(city_name=city_name)
+        except City.DoesNotExist:
+            return HttpResponse("City not found", status=404)
+
+        # Initialize result set based on search type
+        items = None
+
+        if search_type == 'room':
+            items = Room.objects.filter(city=city)
+
+            # Apply additional filters
+            rent_min = request.GET.get('rent_min')
+            rent_max = request.GET.get('rent_max')
+            if rent_min:
+                items = items.filter(rent__gte=rent_min)
+            if rent_max:
+                items = items.filter(rent__lte=rent_max)
+
+            bills_included = request.GET.get('bills_included')
+            if bills_included:
+                items = items.filter(bills_included=bills_included == 'True')
+
+            for_female = request.GET.get('for_female')
+            if for_female:
+                items = items.filter(for_female=for_female == 'True')
+
+            room_size = request.GET.get('room_size')
+            if room_size:
+                items = items.filter(room_size=room_size)
+
+            num_of_rooms = request.GET.get('num_of_rooms')
+            if num_of_rooms:
+                items = items.filter(num_of_rooms=num_of_rooms)
+
+            smoking_allowed = request.GET.get('smoking_allowed')
+            if smoking_allowed:
+                items = items.filter(smoking_allowed=smoking_allowed == 'True')
+
+            length_of_stay_min = request.GET.get('length_of_stay_min')
+            length_of_stay_max = request.GET.get('length_of_stay_max')
+            if length_of_stay_min:
+                items = items.filter(length_of_stay_min__gte=length_of_stay_min)
+            if length_of_stay_max:
+                items = items.filter(length_of_stay_max__lte=length_of_stay_max)
+
+            move_on_timing = request.GET.get('move_on_timing')
+            if move_on_timing:
+                items = items.filter(move_on_timing=move_on_timing)
+
+            free_wifi = request.GET.get('free_wifi')
+            if free_wifi:
+                items = items.filter(free_wifi=free_wifi == 'True')
+
+            # Fetch attachments for rooms
+            attachments = Attachment.objects.filter(room__in=items)
+
+        elif search_type == 'roommate':
+            items = RoommateProfile.objects.filter(city=city)
+
+            # Apply additional filters
+            occupation = request.GET.get('occupation')
+            if occupation:
+                items = items.filter(occupation=occupation)
+
+            gender = request.GET.get('gender')
+            if gender:
+                items = items.filter(gender=gender)
+
+            music_allowed = request.GET.get('music_allowed')
+            if music_allowed:
+                items = items.filter(music=music_allowed)
+
+            adjusted_with_age_min = request.GET.get('adjusted_with_age_min')
+            adjusted_with_age_max = request.GET.get('adjusted_with_age_max')
+            if adjusted_with_age_min:
+                items = items.filter(adjusted_with_age_min__gte=adjusted_with_age_min)
+            if adjusted_with_age_max:
+                items = items.filter(adjusted_with_age_max__lte=adjusted_with_age_max)
+
+            smoking_allowed = request.GET.get('smoking_allowed')
+            if smoking_allowed:
+                items = items.filter(smoking_allowed=smoking_allowed == 'True')
+
+            bills_included = request.GET.get('bills_included')
+            if bills_included:
+                items = items.filter(bills_included=bills_included == 'True')
+
+            free_wifi = request.GET.get('free_wifi')
+            if free_wifi:
+                items = items.filter(free_wifi=free_wifi == 'True')
+
+            # Fetch attachments for roommate profiles
+            attachments = Attachment.objects.filter(roommate_profile__in=items)
+
+        elif search_type == 'accessory':
+            items = Accessory.objects.filter(city=city)
+
+            # Apply additional filters
+            price_min = request.GET.get('price_min')
+            price_max = request.GET.get('price_max')
+            if price_min:
+                items = items.filter(price__gte=price_min)
+            if price_max:
+                items = items.filter(price__lte=price_max)
+
+            # Fetch attachments for accessories
+            attachments = Attachment.objects.filter(accessory__in=items)
+
+        else:
+            return HttpResponse("Invalid search type", status=400)
+
+        # Prepare context
+        context = {
+            'items': items,
+            'attachments': attachments,
+            'city_name': city_name,
+            'search_type': search_type,
+        }
+
+        # Render the template with context
+        return render(request, 'advanced_search_result.html', context)
     if request.method == "GET":
         # Retrieve the values from the form using request.GET
         city_name = request.GET.get('city_name')

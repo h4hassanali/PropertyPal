@@ -333,213 +333,261 @@
           </nav>          
 
 
+
+
 <br><br><br>
-<header>
-    <strong>Advanced Search</strong>
-</header>
 
-<!-- Advanced Search Form -->
-<form action="advanced_search_result" method="GET" style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; padding: 1.25rem; background-color: #f7f7f7; box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); max-width: 640px; width: 100%; border: 1px solid #e2e8f0; border-radius: 9999px;">
-
-    <!-- Centered Search Bar -->
-    <div style="width: 100%; position: relative;">
-        <input type="text" name="city_name" id="city_name" autoComplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" placeholder="Search Rooms, Roommates..." value="" style="text-align: center; color: #6b7280; font-size: 0.875rem; width: 100%; padding-right: 3.5rem; padding-left: 2.5rem; padding-top: 0.75rem; padding-bottom: 0.75rem; border-radius: 9999px; background-color: transparent; border: 1px solid #e2e8f0;" />
-        <ul id="city-list" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 1000; background-color: #fff; border: 1px solid #e2e8f0; border-radius: 5px; list-style: none; margin: 0; padding: 0;"></ul>
-        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" style="width: 1.25rem; height: 1.25rem; margin-left: 0.125rem; color: #9ca3af; position: absolute; top: 50%; right: 1rem; transform: translateY(-50%);" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-            <path d="M256 32C167.67 32 96 96.51 96 176c0 128 160 304 160 304s160-176 160-304c0-79.49-71.67-144-160-144zm0 224a64 64 0 1164-64 64.07 64.07 0 01-64 64z"></path>
-        </svg>
-    </div>
-
-    <!-- Search Type Options -->
-    <div style="display: flex; align-items: center; justify-content: center; margin-top: 20px; gap: 1.5rem; width: 100%; margin-left: 80px; margin-right: 80px; margin-top: 20px; margin-bottom: 20px;">
-        <label style="display: inline-flex; align-items: center; font-size: 1.125rem; font-weight: bold;">
-            <input type="radio" style="color: #10b981;" name="searchType" value="room" checked>
-            <span style="margin-left: 0.5rem; color: #1f2937;">Search Room</span>
-        </label>
-        <label style="display: inline-flex; align-items: center; font-size: 1.125rem; font-weight: bold;">
-            <input type="radio" style="color: #10b981;" name="searchType" value="roommate">
-            <span style="margin-left: 0.5rem; color: #1f2937;">Search Roommate</span>
-        </label>
-        <label style="display: inline-flex; align-items: center; font-size: 1.125rem; font-weight: bold;">
-            <input type="radio" style="color: #10b981;" name="searchType" value="accessory">
-            <span style="margin-left: 0.5rem; color: #1f2937;">Search Accessories</span>
-        </label>
-    </div>
-
-    <!-- Filter Section -->
-    <div class="filters-section" style="width: 100%; background-color: #f9f9f9; padding: 20px; border-radius: 15px;">
-        <div class="filter-grid">
-
-            <!-- Rent Filters -->
-            <div class="filter-item">
-                <label for="rent-min">Rent Min:</label>
-                <input type="number" id="rent-min" name="rent_min" class="form-control">
+          <header style="margin-left: 10px;" class="searchArea w-auto h-auto mt-7 flex flex-col space-y-5 lg:space-y-0 border-b border-gray-200 lg:flex-row lg:items-center lg:pb-3">
+            <div class="w-full flex relative flex-col lg:flex-row space-y-4 space-x-4 lg:space-y-0 items-center lg:order-2 lg:justify-end lg:w-full">
+                <form method="get" action="{% url 'search' %}">
+                    <input type="hidden" name="city_name" value="{{ city_name }}">
+                    <input type="hidden" name="searchType" value="{{ search_type }}">
+            
+                    <!-- Sort By Dropdown -->
+                    <div class="sort-by" style="display: flex; align-items: center; margin-bottom: 1em; margin-top: 1em;">
+                        <label for="sort" style="font-size: 1em; font-weight: 500; margin-right: 0.75em; color: #555; text-transform: uppercase;">Sort By</label>
+                        <select id="sort" name="sort" onchange="this.form.submit()" 
+                                style="padding: 0.6em 1em; font-size: 1em; border: none; border-radius: 8px; background: #f0f0f0; color: #333; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: background 0.3s ease, color 0.3s ease;">
+                            <option value="price_low_to_high" {% if request.GET.sort == 'price_low_to_high' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price_high_to_low" {% if request.GET.sort == 'price_high_to_low' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest</option>
+                            <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest</option>
+                        </select>
+                    </div>
+                
+                    <!-- Search Results Display -->
+                    {% for item in items %}
+                        <!-- Render each item here -->
+                    {% endfor %}
+                </form>
+                
+                <div style="margin-right: 30px;" class="w-full flex items-center space-x-4 lg:space-x-0 lg:w-80 md:justify-center lg:justify-stretch relative">
+                    <form action="search" method="post" class="search bg-white rounded-full transition transform relative lg:order-1 text-sm lg:text-md !w-full !max-w-full border border-gray-400 z-50 duration-200 focus-within:border-custom-green">
+                        {% csrf_token %}
+                        <div>
+                            <input type="hidden" name="searchType" value="{{search_type}}">
+                            <input type="text" name="city_name" id="city_name" list="suggestions" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" placeholder="Search Places..." class="text-left placeholder:text-gray-500 placeholder:text-sm w-full h-full pr-14 pl-10 py-3 input capitalize truncate rounded-full bg-transparent" value="{{city_name}}">
+                            <datalist id="suggestions"></datalist>
+                        </div>
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="w-5 h-5 ml-0.5 text-gray-400 locationIcon" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M256 32C167.67 32 96 96.51 96 176c0 128 160 304 160 304s160-176 160-304c0-79.49-71.67-144-160-144zm0 224a64 64 0 1164-64 64.07 64.07 0 01-64 64z"></path>
+                        </svg>
+                    </form>
+                    <div class="filter w-8 h-8 right-3 top-2 z-50 absolute lg:hidden cursor-pointer border border-gray-300 rounded-full flex justify-flex items-center p-1.5">
+                        <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 7h-9"></path>
+                            <path d="M14 17H5"></path>
+                            <circle cx="17" cy="17" r="3"></circle>
+                            <circle cx="7" cy="7" r="3"></circle>
+                        </svg>
+                    </div>
+                </div>
+                <div class="!hidden btn-group flex items-center space-x-5 justify-center transition duration-200 lg:hidden">
+                    <button class="bg-custom-green text-white px-6 py-2 transition duration-200 rounded-lg text-xs">All</button>
+                    <button class="bg-gray-100 text-gray-400 px-6 py-2 transition duration-200 rounded-lg text-xs">Male</button>
+                    <button class="bg-gray-100 text-gray-400 px-6 py-2 transition duration-200 rounded-lg text-xs">Female</button>
+                </div>
             </div>
-            <div class="filter-item">
-                <label for="rent-max">Rent Max:</label>
-                <input type="number" id="rent-max" name="rent_max" class="form-control">
-            </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const input = document.getElementById("city_name");
+            
+                    input.addEventListener("input", function() {
+                        const query = input.value;
+                    });
+            </script>
+            
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const input = document.getElementById("city_name");
+            
+                    input.addEventListener("input", function() {
+                        const query = input.value;
+            
+                        if (query.length >= 2) {  // Fetch suggestions only if query length is 2 or more characters
+                            fetch(`/autocomplete/?term=${query}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    let suggestions = '';
+                                    data.forEach(city => {
+                                        suggestions += `<option value="${city}">${city}</option>`;
+                                    });
+                                    document.getElementById('suggestions').innerHTML = suggestions;
+                                });
+                        } else {
+                            document.getElementById('suggestions').innerHTML = '';
+                        }
+                    });
+                });
+            </script>
+                        
+            <div class="tabs-group flex items-center justify-between text-gray-500 md:justify-start md:gap-6 lg:gap-10 lg:order-1 w-full">
+               <!-- <div style="margin-left: 10px;" class="text-gray-400 pb-2  lg:pb-2 cursor-pointer Search_tab__39irm Search_active__15r5K flex flex-col justify-center items-center space-y-1">
+                  <div>
+                     <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" class="w-6 h-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M128,26A102.12,102.12,0,0,0,26,128v56a22,22,0,0,0,35,17.74c12.38-9,34.06-19.74,67-19.74s54.61,10.73,67,19.73A22,22,0,0,0,230,184V128A102.12,102.12,0,0,0,128,26Zm90,102v12.5a164.29,164.29,0,0,0-44.8-20.3A165.07,165.07,0,0,0,141.69,39,90.15,90.15,0,0,1,218,128Zm-57.21-10.78a168.56,168.56,0,0,0-65.58,0c5-38.38,24.16-65.59,32.79-76.14C136.63,51.65,155.8,78.85,160.79,117.23ZM114.31,39A165.07,165.07,0,0,0,82.8,120.21,164.29,164.29,0,0,0,38,140.51V128A90.15,90.15,0,0,1,114.31,39Zm98.26,153.85A9.94,9.94,0,0,1,202,192c-13.82-10-37.88-22-74-22s-60.22,12-74,22a9.92,9.92,0,0,1-10.53.85A9.79,9.79,0,0,1,38,184V155a154,154,0,0,1,180,0v29A9.79,9.79,0,0,1,212.57,192.89Z"></path>
+                     </svg>
+                  </div>
+                  <p class="text-sm">All Listing</p>
+               </div> -->
+               <a href="/search?city_name={{city_name}}&searchType=room" class="text-gray-400 pb-2 lg:pb-2 cursor-pointer Search_tab__39irm false flex flex-col justify-center items-center space-y-1">
 
-            <!-- Bills Included -->
-            <div class="filter-item">
-                <label for="bills-included">Bills Included:</label>
-                <select id="bills-included" name="bills_included" class="form-control">
-                    <option value="">Any</option>
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
-            </div>
+               <div class="text-gray-400 pb-2  lg:pb-2 cursor-pointer Search_tab__39irm false flex flex-col justify-center items-center space-y-1">
+                  <div>
+                     <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 32 32" class="w-7 h-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 6 6 C 4.355469 6 3 7.355469 3 9 L 3 15.78125 C 2.390625 16.332031 2 17.121094 2 18 L 2 27 L 7 27 L 7 25 L 25 25 L 25 27 L 30 27 L 30 18 C 30 17.121094 29.609375 16.332031 29 15.78125 L 29 9 C 29 7.355469 27.644531 6 26 6 Z M 6 8 L 26 8 C 26.554688 8 27 8.445313 27 9 L 27 15 L 25 15 L 25 14 C 25 12.355469 23.644531 11 22 11 L 18 11 C 17.234375 11 16.53125 11.300781 16 11.78125 C 15.46875 11.300781 14.765625 11 14 11 L 10 11 C 8.355469 11 7 12.355469 7 14 L 7 15 L 5 15 L 5 9 C 5 8.445313 5.445313 8 6 8 Z M 10 13 L 14 13 C 14.554688 13 15 13.445313 15 14 L 15 15 L 9 15 L 9 14 C 9 13.445313 9.445313 13 10 13 Z M 18 13 L 22 13 C 22.554688 13 23 13.445313 23 14 L 23 15 L 17 15 L 17 14 C 17 13.445313 17.445313 13 18 13 Z M 5 17 L 27 17 C 27.554688 17 28 17.445313 28 18 L 28 25 L 27 25 L 27 23 L 5 23 L 5 25 L 4 25 L 4 18 C 4 17.445313 4.445313 17 5 17 Z"></path>
+                     </svg>
+                  </div>
+               
+                  <p class="text-sm">Rooms</p>
+               </div>
+              </a>
+              <a href="/search?city_name={{city_name}}&searchType=roommate" class="text-gray-400 pb-2 lg:pb-2 cursor-pointer Search_tab__39irm false flex flex-col justify-center items-center space-y-1">
 
-            <!-- For Female -->
-            <div class="filter-item">
-                <label for="for-female">For Female:</label>
-                <select id="for-female" name="for_female" class="form-control">
-                    <option value="">Any</option>
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
-            </div>
+               <div class="text-gray-400 pb-2  lg:pb-2 cursor-pointer Search_tab__39irm false flex flex-col justify-center items-center space-y-1">
+                  <div>
+                     <svg class="w-8 h-5 text-gray-200 " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 71.746 45.393" fill="#929292">
+                        <path id="need-roommate" d="M17.625,31.453c2.674,5.576,10.784,5.774,13.341.029a15.047,15.047,0,0,1-1.734-2.219c-.082-.123-.169-.245-.251-.374a7.227,7.227,0,0,1-4.688,1.6,7.153,7.153,0,0,1-5-2c-.082-.07-.152-.14-.228-.216-.187.52-.42,1.139-.677,1.717a9.122,9.122,0,0,1-.765,1.465Zm29.2,1.769c2.149,4.49,8.676,4.648,10.737.023a12.152,12.152,0,0,1-1.4-1.787c-.064-.1-.134-.2-.2-.3a5.849,5.849,0,0,1-3.772,1.29,5.758,5.758,0,0,1-4.023-1.611c-.064-.058-.123-.117-.187-.175-.152.415-.339.917-.543,1.384a7.714,7.714,0,0,1-.613,1.174Zm11.344-.473c2.3,1.623,7.888,2.014,10.031,3.211a5.931,5.931,0,0,1,1.874,1.588c1.08,1.425,3.287,6.6-.292,6.872H63.043l.829-9.266a17,17,0,0,1-5.716-1.781c-1.232,5.424-9.6,6.2-12.016.146l-.228-.584a2.229,2.229,0,0,0,.8-1.2c.263-.607.508-1.267.66-1.717a21.468,21.468,0,0,1-1.734-2.464l-1.752-2.779a5.045,5.045,0,0,1-.993-2.546,2,2,0,0,1,.169-.911,1.731,1.731,0,0,1,.6-.7,1.946,1.946,0,0,1,.426-.216,43.043,43.043,0,0,1-.082-5,7.037,7.037,0,0,1,.216-1.133A6.7,6.7,0,0,1,47.18,10.5a9.368,9.368,0,0,1,2.481-1.1c.555-.158-.082-1.407.5-1.465,2.773-.286,6.878,1.728,8.816,3.824a6.789,6.789,0,0,1,1.711,4.291l-.111,4.542h0a1.265,1.265,0,0,1,.923.958,3.946,3.946,0,0,1-.479,2.388h0c-.012.018-.018.041-.029.058l-2,3.287a17.036,17.036,0,0,1-2.446,3.375c.088.123.175.257.263.38a12.184,12.184,0,0,0,1.3,1.676.089.089,0,0,1,.058.041ZM45.107,21.212a1.734,1.734,0,0,0-.882.228.67.67,0,0,0-.251.292,1.046,1.046,0,0,0-.082.467,4.188,4.188,0,0,0,.835,2.032l.006.012h0l1.752,2.779a14.767,14.767,0,0,0,2.353,3.089A4.8,4.8,0,0,0,52.2,31.465a4.913,4.913,0,0,0,3.55-1.413,15.572,15.572,0,0,0,2.417-3.3l1.968-3.246a3.107,3.107,0,0,0,.415-1.728c-.053-.2-.269-.292-.631-.309-.082-.006-.158-.006-.239-.006l-.274.018a.435.435,0,0,1-.152-.012,2.874,2.874,0,0,1-.543-.029l.677-2.989c-5.01.788-8.758-2.931-14.053-.747l.38,3.521a2.278,2.278,0,0,1-.6-.012ZM31.725,30.863c2.855,2.014,9.8,2.5,12.465,3.988a7.365,7.365,0,0,1,2.33,1.973c1.343,1.769,4.087,8.2-.362,8.542H37.78l1.028-11.514a21.009,21.009,0,0,1-7.1-2.213c-1.53,6.738-11.934,7.7-14.929.181A22.4,22.4,0,0,1,9.8,33.981l1.611,11.379H2.433c-4.449-.339-1.7-6.767-.362-8.542A7.3,7.3,0,0,1,4.4,34.845c2.657-1.483,9.575-1.968,12.442-3.976a8.556,8.556,0,0,0,.654-1.279c.327-.753.631-1.576.823-2.137a27.163,27.163,0,0,1-2.149-3.059l-2.178-3.456a6.306,6.306,0,0,1-1.232-3.159,2.457,2.457,0,0,1,.216-1.133,2.1,2.1,0,0,1,.747-.87,2.774,2.774,0,0,1,.525-.269,56.222,56.222,0,0,1-.105-6.218,8.534,8.534,0,0,1,.269-1.407A8.324,8.324,0,0,1,18.086,3.2a11.6,11.6,0,0,1,3.083-1.372c.689-.193-.1-1.752.613-1.822,3.451-.35,8.548,2.149,10.959,4.753a8.4,8.4,0,0,1,2.125,5.331l-.134,5.64h0a1.559,1.559,0,0,1,1.144,1.185,4.933,4.933,0,0,1-.6,2.972h0l-.035.07-2.481,4.081a21.23,21.23,0,0,1-3.042,4.192c.105.152.216.315.327.473a14.732,14.732,0,0,0,1.623,2.084.426.426,0,0,0,.053.076ZM15.494,16.53a2.092,2.092,0,0,0-1.1.286.8.8,0,0,0-.309.362,1.29,1.29,0,0,0-.105.584,5.165,5.165,0,0,0,1.033,2.522l.006.018h0l2.172,3.456A18.5,18.5,0,0,0,20.112,27.6a6.006,6.006,0,0,0,4.169,1.682,6.134,6.134,0,0,0,4.414-1.752,19.56,19.56,0,0,0,3.007-4.1L34.148,19.4a3.929,3.929,0,0,0,.52-2.149c-.064-.245-.333-.362-.788-.385-.1-.006-.2-.006-.3-.006l-.344.018a.658.658,0,0,1-.187-.012,3.754,3.754,0,0,1-.671-.035l.841-3.713C27,14.1,22.343,9.471,15.762,12.192l.473,4.379a5.074,5.074,0,0,1-.742-.041Z" transform="translate(0.004 0.026)"></path>
+                     </svg>
+                  </div>
+                  <p class="text-sm">Roommates</p>
+               </div>
+              </a>
+              <a href="/search?city_name={{city_name}}&searchType=accessory" class="text-gray-400 pb-2 lg:pb-2 cursor-pointer Search_tab__39irm false flex flex-col justify-center items-center space-y-1">
 
-            <!-- Adjusted with Age -->
-            <div class="filter-item">
-                <label for="age-min">Age Min:</label>
-                <input type="number" id="age-min" name="adjusted_with_age_min" class="form-control">
+               <div class="text-gray-400 pb-2  lg:pb-2 cursor-pointer Search_tab__39irm false flex flex-col justify-center items-center space-y-1">
+                  <div>
+                     <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M8 9l5 5v7h-5v-4m0 4h-5v-7l5 -5m1 1v-6a1 1 0 0 1 1 -1h10a1 1 0 0 1 1 1v17h-8"></path>
+                        <path d="M13 7l0 .01"></path>
+                        <path d="M17 7l0 .01"></path>
+                        <path d="M17 11l0 .01"></path>
+                        <path d="M17 15l0 .01"></path>
+                     </svg>
+                  </div>
+                  <p class="text-sm">Accessories</p>
+               </div>
+              </a>
             </div>
-            <div class="filter-item">
-                <label for="age-max">Age Max:</label>
-                <input type="number" id="age-max" name="adjusted_with_age_max" class="form-control">
-            </div>
+         </header>
 
-            <!-- Room Size -->
-            <div class="filter-item">
-                <label for="room-size">Room Size:</label>
-                <select id="room-size" name="room_size" class="form-control">
-                    <option value="">Any</option>
-                    <option value="Single">Single</option>
-                    <option value="Double">Double</option>
-                </select>
-            </div>
 
-            <!-- Number of Rooms -->
-            <div class="filter-item">
-                <label for="num-of-rooms">Number of Rooms:</label>
-                <input type="number" id="num-of-rooms" name="num_of_rooms" class="form-control">
-            </div>
 
-            <!-- Smoking Allowed -->
-            <div class="filter-item">
-                <label for="smoking-allowed">Smoking Allowed:</label>
-                <select id="smoking-allowed" name="smoking_allowed" class="form-control">
-                    <option value="">Any</option>
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
+         <div style="
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    padding: 16px;
+">
+    {% for item in items %}
+        <div style="
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        ">
+            <div id="carousel{{ forloop.counter }}" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    {% for attachment in item.attachments.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            {% if attachment.file_type == 'Photo' %}
+                                <img src="{{ attachment.file.url }}" alt="Image" style="
+                                    width: 100%;
+                                    height: 200px;
+                                    object-fit: cover;
+                                ">
+                            {% elif attachment.file_type == 'Video' %}
+                                <video controls style="
+                                    width: 100%;
+                                    height: 200px;
+                                    object-fit: cover;
+                                ">
+                                    <source src="{{ attachment.file.url }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <a class="carousel-control-prev" href="#carousel{{ forloop.counter }}" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carousel{{ forloop.counter }}" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
             </div>
-
-            <!-- Length of Stay -->
-            <div class="filter-item">
-                <label for="stay-min">Stay Min (Months):</label>
-                <input type="number" id="stay-min" name="length_of_stay_min" class="form-control">
+            <div style="
+                padding: 16px;
+            ">
+                <div style="
+                    font-size: 1.25em;
+                    margin-bottom: 8px;
+                ">
+                    {% if search_type == 'room' %}
+                        Room listed by {{ item.listed_by.username }}
+                    {% elif search_type == 'roommate' %}
+                        {{ item.user.username }}
+                    {% elif search_type == 'accessory' %}
+                        Accessory: {{ item.name }}
+                    {% endif %}
+                </div>
+                <div style="
+                    font-size: 1em;
+                    color: #555;
+                ">
+                    {% if search_type == 'room' %}
+                        City: {{ item.city.city_name }}<br>
+                        Rent: Rs: {{ item.rent }} /-<br>
+                        Info: {{ item.info }}
+                    {% elif search_type == 'roommate' %}
+                        City: {{ item.city.city_name }}<br>
+                        Contact Info: {{ item.contact_info }}<br>
+                        Budget: {{ item.budget }}
+                    {% elif search_type == 'accessory' %}
+                        City: {{ item.city.city_name }}<br>
+                        Description: {{ item.description }}<br>
+                        Price: {{ item.price }}
+                    {% endif %}
+                </div>
             </div>
-            <div class="filter-item">
-                <label for="stay-max">Stay Max (Months):</label>
-                <input type="number" id="stay-max" name="length_of_stay_max" class="form-control">
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.875em;
+                color: #777;
+                padding: 8px 16px;
+                border-top: 1px solid #ddd;
+            ">
+                <span>{{ item.city.city_name }}</span>
+                <span>7 km from your search</span>
             </div>
-
-            <!-- Move On Timing -->
-            <div class="filter-item">
-                <label for="move-on-timing">Move On Timing:</label>
-                <input type="time" id="move-on-timing" name="move_on_timing" class="form-control">
-            </div>
-
-            <!-- Free Wifi -->
-            <div class="filter-item">
-                <label for="free-wifi">Free Wifi:</label>
-                <select id="free-wifi" name="free_wifi" class="form-control">
-                    <option value="">Any</option>
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
-            </div>
-
-            <!-- Roommate Filters -->
-            <div class="filter-item">
-                <label for="occupation">Occupation:</label>
-                <select id="occupation" name="occupation" class="form-control">
-                    <option value="">Any</option>
-                    <option value="Don't mind">Don't mind</option>
-                    <option value="Professional">Professional</option>
-                    <option value="Student">Student</option>
-                </select>
-            </div>
-            <div class="filter-item">
-                <label for="gender">Gender:</label>
-                <select id="gender" name="gender" class="form-control">
-                    <option value="">Any</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-            </div>
-
-            <!-- Music Allowed -->
-            <div class="filter-item">
-                <label for="music-allowed">Music Allowed:</label>
-                <select id="music-allowed" name="music_allowed" class="form-control">
-                    <option value="">Any</option>
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
-            </div>
-
         </div>
-    </div>
-
-    <!-- Search Button -->
-    <div style="display: flex; align-items: center; justify-content: center; margin-top: 20px;">
-        <button type="submit" style="text-align: center; font-size: 1.125rem; font-weight: bold; padding-top: 0.75rem; padding-bottom: 0.75rem; padding-left: 2rem; padding-right: 2rem; background-color: #10b981; color: white; border-radius: 9999px; border: none; cursor: pointer;">
-            Search
-        </button>
-    </div>
-
-</form>
+    {% endfor %}
+</div>
 
 
-<!-- Add some basic styling -->
-<style>
-    .filters-section {
-        padding: 20px;
-        background-color: #f9f9f9;
-    }
-    .section-title {
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
-    .filter-group {
-        margin-bottom: 30px;
-    }
-    .filter-group h3 {
-        font-size: 20px;
-        margin-bottom: 15px;
-    }
-    .filter-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 15px;
-    }
-    .filter-item {
-        display: flex;
-        flex-direction: column;
-    }
-    .filter-item label {
-        margin-bottom: 5px;
-    }
-    .filter-item input,
-    .filter-item select {
-        padding: 8px;
-        box-sizing: border-box;
-    }
-</style>
 
+
+
+
+
+
+         
+
+
+
+         
+
+          
+
+
+
+         
          <section class="footer border-t border-gray-100 pt-10 md:pt-24 pb-10" >
             <section class="Container bg-white px-3 md:px-0 pb-16" style="margin-left: 300px;">
                <div class="whitespace-nowrap grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-10 md:gap-10 pb-10 border-b border-gray-200">

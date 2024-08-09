@@ -11,4 +11,6 @@ urlpatterns = [
     path('accessories/', list_accessories, name='list_accessories'),
     path('aboutus',aboutus,name='aboutus'),
     path('advanced_search',advanced_search,name='advanced_search'),
+    path('advanced_search_result',advanced_search_result,name='advanced_search_result'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

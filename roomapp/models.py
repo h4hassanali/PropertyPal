@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils.translation import gettext_lazy as _
 class City(models.Model):
     city_name = models.CharField(max_length=50, unique=True)
 
@@ -15,12 +15,22 @@ class User(models.Model):
 
     def __str__(self):
         return self.username
-
 class Room(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='rooms')
     info = models.TextField()
-    rent = models.DecimalField(max_digits=10, decimal_places=2, default=100)  # Added default value
+    rent = models.DecimalField(max_digits=10, decimal_places=2, default=100)  # Default value added
     listed_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listed_rooms')
+    bills_included = models.BooleanField(default=False)  # Default value added
+    for_female = models.BooleanField(default=False)  # Default value added
+    adjusted_with_age_min = models.PositiveIntegerField(default=0)  # Default value added
+    adjusted_with_age_max = models.PositiveIntegerField(default=100)  # Default value added
+    room_size = models.CharField(max_length=10, choices=[('Single', 'Single'), ('Double', 'Double')], default='Single')  # Default value added
+    num_of_rooms = models.PositiveIntegerField(default=1)  # Default value added
+    smoking_allowed = models.BooleanField(default=False)  # Default value added
+    length_of_stay_min = models.PositiveIntegerField(default=0)  # Default value added
+    length_of_stay_max = models.PositiveIntegerField(default=12)  # Default value added
+    move_on_timing = models.TimeField(null=True, blank=True)  # Default value added
+    free_wifi = models.BooleanField(default=False)  # Default value added
 
     def __str__(self):
         return f"Room in {self.city.city_name} listed by {self.listed_by.username}"
@@ -29,7 +39,16 @@ class RoommateProfile(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='roommate_profiles')
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='roommate_profile')
     contact_info = models.CharField(max_length=100)
-    budget = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Added budget attribute
+    budget = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    occupation = models.CharField(max_length=20, choices=[('Don\'t mind', 'Don\'t mind'), ('Professional', 'Professional'), ('Student', 'Student')], default='Don\'t mind')  # Default value added
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')], default='Male')  # Default value added
+    music = models.CharField(max_length=20, choices=[('Occasionally', 'Occasionally'), ('Anytime', 'Anytime'), ('No', 'No')], default='Occasionally')  # Default value added
+    smoking_allowed = models.BooleanField(default=False)  # Default value added
+    timing_of_room_engagement = models.CharField(max_length=50, null=True, blank=True)  # Default value added
+    adjusted_with_age_min = models.PositiveIntegerField(default=0)  # Default value added
+    adjusted_with_age_max = models.PositiveIntegerField(default=100)  # Default value added
+    bills_included = models.BooleanField(default=False)  # Default value added
+    free_wifi = models.BooleanField(default=False)  # Default value added
 
     def __str__(self):
         return f"{self.user.username} in {self.city.city_name}"
@@ -39,15 +58,10 @@ class Accessory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accessories')
     name = models.CharField(max_length=100)
     description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Added price attribute
-    
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
     def __str__(self):
         return f"{self.name} in {self.city.city_name}"
-
-from django.db import models
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
-
 class Attachment(models.Model):
     class AttachmentType(models.TextChoices):
         PHOTO = "Photo", _("Photo")
